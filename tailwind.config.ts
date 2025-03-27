@@ -12,6 +12,23 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontFamily: {
+        sans: [
+          'Inter', // Primary font
+          '-apple-system', // Fallback for Apple devices
+          'BlinkMacSystemFont', // Fallback for macOS
+          'Segoe UI', // Fallback for Windows
+          'Roboto', // Fallback for Android
+          'Helvetica Neue', // Fallback for older systems
+          'Arial', // Generic fallback
+          'sans-serif', // Ultimate fallback
+        ],
+      },
+      screens: {
+        'proj-small': '450px',
+        'slug-med': '890px',
+        'note-sm': '570px'
+      }
     },
   },
   plugins: [],
