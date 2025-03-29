@@ -19,14 +19,15 @@ async function aiPostHandler(req: NextApiRequest, res: NextApiResponse) {
             // console.log('i am in one')
             aiResponseData = await aiResponse(prompt);
             // console.log("AI Response from Together.AI:", aiResponseData);
-        } catch (error: any) {
-            if (error.status === 429) {
-                console.warn("Together.AI rate limit exceeded. Falling back to AIMLAPI...");
-                // console.log('one is exhausted')
+        } catch (error) {
+            if (error instanceof Error && "status" in error && typeof error.status === "number") {
+                if (error.status === 429) {
+                    console.warn("Together.AI rate limit exceeded. Falling back to AIMLAPI...");
+                } else {
+                    throw error; // Only throw unexpected errors
+                }
             } else {
-                // console.log('OneERROR: ', error.status)
-                // console.log('one has third-party error')
-                throw error; // Only throw unexpected errors
+                throw new Error("An unknown error occurred.");
             }
         }
 
@@ -35,13 +36,15 @@ async function aiPostHandler(req: NextApiRequest, res: NextApiResponse) {
                 // console.log('i am in two')
                 aiResponseData = await aiSecondResponse(prompt);
                 // console.log("AI Response from OpenRouter API:", aiResponseData);
-            } catch (error: any) {
-                if (error.status === 429) {
-                    console.warn("OpenRouter API rate limit exceeded. Falling back to AIMLAPI...");
-                    // console.log('two is exhausted')
+            } catch (error) {
+                if (error instanceof Error && "status" in error && typeof error.status === "number") {
+                    if (error.status === 429) {
+                        console.warn("OpenRouter API rate limit exceeded. Falling back to AIMLAPI...");
+                    } else {
+                        throw error; // Only throw unexpected errors
+                    }
                 } else {
-                    // console.log('two has third-party error')
-                    throw error; // Only throw unexpected errors
+                    throw new Error("An unknown error occurred.");
                 }
             }
         }
@@ -51,17 +54,20 @@ async function aiPostHandler(req: NextApiRequest, res: NextApiResponse) {
                 // console.log('i am in three')
                 aiResponseData = await aiLastResponse(prompt);
                 // console.log("AI Response from AIMLAPI:", aiResponseData);
-            } catch (error: any) {
-                if (error.status === 429) {
-                    console.warn("AIMLAPI rate limit exceeded. No AI providers available.");
-                    // console.log('three is exhausted')
-                    return res.status(503).json({ 
-                        success: false, 
-                        message: "Server temporarily down, please try again in 4 minutes." 
-                    });
+            } catch (error) {
+                if (error instanceof Error && "status" in error && typeof error.status === "number") {
+                    if (error.status === 429) {
+                        console.warn("AIMLAPI rate limit exceeded. No AI providers available.");
+                        // console.log('three is exhausted')
+                        return res.status(503).json({ 
+                            success: false, 
+                            message: "Server temporarily down, please try again in 4 minutes." 
+                        });
+                    } else {
+                        throw error; // Only throw unexpected errors
+                    }
                 } else {
-                    // console.log('three has third-party error')
-                    throw error; 
+                    throw new Error("An unknown error occurred.");
                 }
             }
         }

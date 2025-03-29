@@ -42,9 +42,10 @@ const ProjectsPage = () => {
 
     const {projects, submitNewProject, fetchAllProjects, deleteProjects, updateTasks, tasks, setTasks, loading } = useBreezeHooks();
 
+
     useEffect(() => {
-      fetchAllProjects();
-    }, []);
+      fetchAllProjects.current?.();
+    }, [fetchAllProjects]);
     
   
     const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, project: IProject) => {
@@ -59,7 +60,7 @@ const ProjectsPage = () => {
  
     const router = useRouter();
  
-    const handleProjectClick = (projectId: string, projectName: string, projectDesc: string) => {
+    const handleProjectClick = (projectId: string, projectName: string ) => {
       // console.log(`projectId: ${projectId},\n projectName: ${projectName}  `)
      router.push(`/projects/${projectId}/${projectName}`);
    };
@@ -79,7 +80,9 @@ const ProjectsPage = () => {
 
     updateTasks({projectId: String(selectedProject?._id)})
     const taskUpdate = tasks?.filter((t) => t.projectId !== selectedProject?._id)
-    taskUpdate && setTasks(taskUpdate);
+    if(taskUpdate) {
+      setTasks(taskUpdate);
+    } 
 
     setIsDeleteModalOpen(false);
     setSelectedProject(null);
@@ -261,7 +264,7 @@ const ProjectsPage = () => {
           >
             <MenuItem onClick={() => {
               if(selectedProject) {
-              handleProjectClick(selectedProject?._id, selectedProject?.name, selectedProject?.description)
+              handleProjectClick(selectedProject?._id, selectedProject?.name)
               }
               }}>Open</MenuItem>
             <MenuItem onClick={() => {

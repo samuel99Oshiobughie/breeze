@@ -33,10 +33,10 @@ const NotesPage = () => {
   const MAX_TITLE_LENGTH = 24;
   const MAX_CONTENT_LENGTH = 80;
 
-
+  
   useEffect(() => {
-    fetchAllNotes();
-  }, []);
+    fetchAllNotes.current?.();
+  }, [fetchAllNotes]);
 
   const editor = useEditor({
     extensions: [
@@ -112,7 +112,7 @@ const NotesPage = () => {
     }
 
     await updateNote({noteObject: noteUpdate, noteId: noteId})
-    fetchAllNotes();
+    fetchAllNotes.current?.();
     handleCloseModal();
   }
 

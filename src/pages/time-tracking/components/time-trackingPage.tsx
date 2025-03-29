@@ -66,7 +66,7 @@ const TimeTrackingPage: React.FC = () => {
        return task.tracked === false && task.title.toLowerCase().includes(searchQuery.toLowerCase())
       } 
     );
-    filtered && setFilteredTasks(filtered);
+    if(filtered) setFilteredTasks(filtered);
     } else {
       setFilteredTasks([]);
     }
@@ -94,7 +94,7 @@ const TimeTrackingPage: React.FC = () => {
     await updateTasks({taskId: selectedTask._id, updatedState: trackedTaskState})
     setSelectedTask(null);
     setSearchQuery('');
-    fetchAllTasks();
+    fetchAllTasks.current?.();
   };
 
   // Handle delete tracked task
@@ -105,7 +105,7 @@ const TimeTrackingPage: React.FC = () => {
     }
 
     await updateTasks({taskId: id, updatedState: trackedTaskState})
-    fetchAllTasks();
+    fetchAllTasks.current?.();
   };
 
 
@@ -132,13 +132,22 @@ const TimeTrackingPage: React.FC = () => {
             {filteredTasks.length > 0 && (
               <List className="max-h-40 overflow-auto mt-2">
                 {filteredTasks.map((task) => (
-                  <ListItem
-                    key={task._id}
-                    button
+                  <ListItem key={task._id}>
+                  <button
                     onClick={() => handleTaskSelect(task)}
+                    style={{
+                      all: 'unset',
+                      display: 'flex',
+                      width: '100%',
+                      padding: '8px',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                    }}
                   >
                     <ListItemText primary={task.title} />
-                  </ListItem>
+                  </button>
+                </ListItem>
+                
                 ))}
               </List>
             )}

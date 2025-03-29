@@ -25,7 +25,7 @@ const SettingsPage: React.FC = () => {
             </Typography>
 
             <Grid2 container spacing={3} columns={{ xs: 12 }}>
-              <Grid2 xs={12} component="div">
+              <Grid2 component="div">
                 <TextField
                   label="Username"
                   value={username}
@@ -34,7 +34,7 @@ const SettingsPage: React.FC = () => {
                   variant="outlined"
                 />
               </Grid2>
-              <Grid2 xs={12} component="div">
+              <Grid2 component="div">
                 <TextField
                   label="Email"
                   value={email}
@@ -43,7 +43,7 @@ const SettingsPage: React.FC = () => {
                   variant="outlined"
                 />
               </Grid2>
-              <Grid2 xs={12} component="div">
+              <Grid2 component="div">
                 <FormControlLabel
                   control={
                     <Switch
@@ -54,7 +54,7 @@ const SettingsPage: React.FC = () => {
                   label="Enable Notifications"
                 />
               </Grid2>
-              <Grid2 xs={12} component="div" className="text-center">
+              <Grid2 component="div" className="text-center">
                 <Button variant="contained" color="primary" onClick={handleSave}>
                   Save Changes
                 </Button>

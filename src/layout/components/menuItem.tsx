@@ -6,7 +6,7 @@ import {
     CalendarToday as CalendarIcon,
     Folder as ProjectsIcon,
     Notes as NotesIcon,
-    Flag as GoalsIcon,
+    // Flag as GoalsIcon,
     Timer as TimerIcon,
     TrendingUp as AnalyticsIcon,
     Settings as SettingsIcon,

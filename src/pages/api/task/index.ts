@@ -17,13 +17,14 @@ async function postTaskHandler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(201).json({ success: true, data: task });
         
     } catch (error) {
-        return res.status(500).json({ success: false, error: 'Internal server error' }); 
+        return res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Internal server error' });
     }
 }
 
 async function getTasksHandler(req: NextApiRequest, res: NextApiResponse) {
     try {
-        const { projectId, taskId } = req.query;   
+        const { projectId, taskId } = req.query; 
+        // throw new Error('testing error')  
         if (taskId) {
             const task = await getTaskByIdController({ taskId: String(taskId), projectId: String(projectId) }, req);
             return res.status(200).json({ success: true, data: task });
@@ -38,7 +39,7 @@ async function getTasksHandler(req: NextApiRequest, res: NextApiResponse) {
 
         }
     } catch (error) {
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Internal server error' });
     }
 }
 
@@ -73,7 +74,7 @@ async function updateTaskHandler(req: NextApiRequest, res: NextApiResponse) {
         }
 
     } catch (error) {
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Internal server error' });
     }
 }
 
@@ -95,7 +96,7 @@ async function deleteTaskHandler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(200).json({ success: true, data: task });
         
     } catch (error) {
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Internal server error' });
     }
 }
 

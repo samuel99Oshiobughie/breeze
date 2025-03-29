@@ -9,16 +9,11 @@ const CalendarPage: React.FC = () => {
    const {tasks, fetchAllTasks } = useBreezeHooks();
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   
-   useEffect(() => {
-      fetchAllTasks();
-    }, []);
-
-  // const events = [
-  //   { id: 1, title: "Team Meeting", date: "2025-01-28", time: "10:00" },
-  //   { id: 2, title: "Project Review", date: "2025-01-28", time: "14:00" },
-  //   { id: 3, title: "Client Call", date: "2025-01-30", time: "11:00" }
-  // ];
-
+  
+  useEffect(() => {
+    fetchAllTasks.current?.();
+  }, [fetchAllTasks]);
+      
   const getDaysInMonth = (date: Date): number => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   };

@@ -3,8 +3,6 @@ import {
   Typography,
   Paper,
   Button,
-  Card,
-  CardContent,
   Grid,
   Box,
   Container,
@@ -86,10 +84,6 @@ const HomePage: React.FC = () => {
     <>
       <Head>
         <title>Home - Productivity App</title>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
       </Head>
       <div className="min-h-screen bg-gray-50 font-inter">
         {/* Hero Banner */}
@@ -238,7 +232,7 @@ const HomePage: React.FC = () => {
           <Container maxWidth="lg">
             <div className="text-center text-white">
               <Typography variant="h4" className="font-bold mb-4">
-                "The key to productivity is to work smarter, not harder."
+              &ldquo;The key to productivity is to work smarter, not harder.&rdquo;
               </Typography>
               <Typography variant="body1">
                 Start organizing your work and life today!

@@ -11,12 +11,12 @@ const DashboardPage = dynamic(() =>
 
 const Page = () => {
 
-  const {fetchAllTasks, fetchAllProjects} = useBreezeHooks();
+  const { fetchAllTasks } = useBreezeHooks();
+
 
   useEffect(() => {
-    fetchAllTasks();
-    // fetchAllProjects();
-  }, []);
+    fetchAllTasks.current?.();
+  }, [fetchAllTasks]);
 
   return(
   <Layout>

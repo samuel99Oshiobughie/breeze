@@ -1,5 +1,6 @@
 import { apiUrl } from "../config";
 import axios from 'axios';
+import { ITask } from '@/interface/interface'
 
 const baseUrl = apiUrl;
 const taskBaseUrl = `${baseUrl}/api/task`
@@ -36,7 +37,7 @@ export const fetchProjectTaskById = async (projectId: string) => {
     return response;
 }
 
-export const updateTask = async ({taskId, updatedTask = {}, projectId} : {taskId?: string, updatedTask?: any, projectId?: string}) => {
+export const updateTask = async ({taskId, updatedTask = {}, projectId} : {taskId?: string, updatedTask?: Partial<ITask>, projectId?: string}) => {
     // console.log(`task-id: ${taskId}, ${projectId}, ${updatedTask}`);
     const url = `${taskBaseUrl}?taskId=${taskId}&projectId=${projectId}`
     const response = await axios.put(url, updatedTask);

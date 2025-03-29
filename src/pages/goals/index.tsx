@@ -1,4 +1,3 @@
-import Layout from "@/layout/layout"
 import dynamic from "next/dynamic";
 
 const GoalsPage = dynamic(() => 
@@ -9,8 +8,6 @@ const GoalsPage = dynamic(() =>
 
 const Page = () => {
   return(
-  // <Layout>
-  // </Layout>
   <GoalsPage/>
   )
 };

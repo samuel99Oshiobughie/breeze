@@ -28,7 +28,7 @@ import {
 
         await updateTasks({taskId: taskId, projectId: projectId, updatedState: updatedProjectId}); 
         handleClose();
-        await fetchAllTasks();
+        await fetchAllTasks.current?.();
     };
 
   

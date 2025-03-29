@@ -88,10 +88,14 @@ async function aiLastResponse(input: string) {
     // console.log("Parsed JSON:", parsedResponse);
     
     return parsedResponse;
-  } catch (error: any) {
-    // console.error(error.response ? error.response.data : error.message);
-    return { error: error.response ? error.response.data : error.message };
-  }
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+        console.error("API Error Response: ", error.response?.data || error.message);
+    } else {
+        console.error("Unexpected Error: ", error);
+    }
+    throw error;
+}
 }
 
 export default aiLastResponse;

@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import {
     useBreezeStoreState,
     useBreezeStoreActions
@@ -43,6 +44,10 @@ export default function useBreezeHooks() {
     const snackbarMessageSeverity =  useBreezeStoreState(state => state.snackbarMessageSeverity)
     const setSnackbarMessageSeverity = useBreezeStoreActions(action => action.setSnackbarMessageSeverity,)
 
+    const fetchAllProjects = useRef<(() => Promise<void>) | null>(null)
+    const fetchAllTasks = useRef<(() => Promise<void>) | null>(null)
+    const fetchAllNotes = useRef<(() => Promise<void>) | null>(null)
+
     function openSnackbar(
         message: string,
         messageSeverity: ISnackbarMessageSeverity,
@@ -63,19 +68,26 @@ export default function useBreezeHooks() {
     openSnackbar(message, 'warning')
     }
 
-    const fetchAllProjects = async() => {
-        try {
-        setLoading(true)
-        const res = await fetchProjects();
-        const fetchedData = res.data.data
-        setProjects(fetchedData)
-        } catch (error: any) {
-            const errorMessage = error.response.data.error;
-            openError(errorMessage);
-        } finally {
-            setLoading(false)
-        }
-    };
+   if(!fetchAllProjects.current) {
+       fetchAllProjects.current = async() => {
+           try {
+           setLoading(true)
+           const res = await fetchProjects();
+           const fetchedData = res.data.data
+           setProjects(fetchedData)
+           } catch (error: unknown) {
+               if (typeof error === "object" && error !== null && "response" in error) {
+                   const axiosError = error as { response: { data: { error: string } } };
+                   const errorMessage = axiosError.response.data.error;
+                   openError(errorMessage);
+               } else {
+                   openError("An unexpected error occurred.");
+               }
+           } finally {
+               setLoading(false)
+           }
+       };
+   }
 
     const submitNewProject = async (projectObject: {
         name: string;
@@ -86,9 +98,14 @@ export default function useBreezeHooks() {
             const response  = await createProject(projectObject)
             const newProject = response.data.data
             addProject(newProject)
-        } catch (error: any) {
-            const errorMessage = error.response.data.error;
-            openError(errorMessage);
+        } catch (error: unknown) {
+            if (typeof error === "object" && error !== null && "response" in error) {
+                const axiosError = error as { response: { data: { error: string } } };
+                const errorMessage = axiosError.response.data.error;
+                openError(errorMessage);
+            } else {
+                openError("An unexpected error occurred.");
+            }
         }
     };
 
@@ -98,27 +115,43 @@ export default function useBreezeHooks() {
             const response = await deleteProject(projectId);
             const projectFilter = projects?.filter(p => p._id !== projectId);
             
-            projectFilter && setProjects(projectFilter);
-        } catch (error: any) {
-            const errorMessage = error.response.data.error;
-            openError(errorMessage);
+            if(projectFilter) {
+             setProjects(projectFilter);
+            }
+             
+            return response;
+        } catch (error: unknown) {
+            if (typeof error === "object" && error !== null && "response" in error) {
+                const axiosError = error as { response: { data: { error: string } } };
+                const errorMessage = axiosError.response.data.error;
+                openError(errorMessage);
+            } else {
+                openError("An unexpected error occurred.");
+            }
         }
       }
 
-    const fetchAllTasks = async() => {
-        try {
-          setLoading(true)
-          const res = await fetchTasks();
-          const fetchedData = res.data.data
-          setTasks(fetchedData)
+    if(!fetchAllTasks.current) {
+        fetchAllTasks.current = async() => {
+            try {
+                setLoading(true)
+                const res = await fetchTasks();
+                const fetchedData = res.data.data
+                setTasks(fetchedData)
+            } catch (error: unknown) {
+                if (typeof error === "object" && error !== null && "response" in error) {
+                    const axiosError = error as { response: { data: { error: string } } };
+                    const errorMessage = axiosError.response.data.error;
+                    openError(errorMessage);
+                } else {
+                    openError("An unexpected error occurred.");
+                }
+            }finally {
+                setLoading(false)
+            }
+        };
+    }
 
-        } catch (error: any) {
-            const errorMessage = error.response.data.error;
-            openError(errorMessage);
-        } finally {
-            setLoading(false)
-        }
-      };
 
     const submitNewTask = async (taskObject: {
         title: string;
@@ -130,9 +163,14 @@ export default function useBreezeHooks() {
         const response  = await createTask(taskObject)
         const newTask = response.data.data
         addTask(newTask)
-    } catch (error: any) {
-        const errorMessage = error.response.data.error;
-        openError(errorMessage);
+    }catch (error: unknown) {
+        if (typeof error === "object" && error !== null && "response" in error) {
+            const axiosError = error as { response: { data: { error: string } } };
+            const errorMessage = axiosError.response.data.error;
+            openError(errorMessage);
+        } else {
+            openError("An unexpected error occurred.");
+        }
     }
     };
 
@@ -148,9 +186,14 @@ export default function useBreezeHooks() {
                 return response
 
             }
-        } catch (error: any) {
-            const errorMessage = error.response.data.error;
-            openError(errorMessage);
+        } catch (error: unknown) {
+            if (typeof error === "object" && error !== null && "response" in error) {
+                const axiosError = error as { response: { data: { error: string } } };
+                const errorMessage = axiosError.response.data.error;
+                openError(errorMessage);
+            } else {
+                openError("An unexpected error occurred.");
+            }
         }
     };
 
@@ -162,11 +205,18 @@ export default function useBreezeHooks() {
     
           const taskFilter = tasks?.filter(t => t._id !== taskId);
 
-          taskFilter && setTasks(taskFilter);
+          if(taskFilter) {
+           setTasks(taskFilter);
+          }
     
-        } catch (error: any) {
-            const errorMessage = error.response.data.error;
-            openError(errorMessage);
+        } catch (error: unknown) {
+            if (typeof error === "object" && error !== null && "response" in error) {
+                const axiosError = error as { response: { data: { error: string } } };
+                const errorMessage = axiosError.response.data.error;
+                openError(errorMessage);
+            } else {
+                openError("An unexpected error occurred.");
+            }
         }
     }
 
@@ -178,25 +228,37 @@ export default function useBreezeHooks() {
             const response  = await createNote(noteObject)
             const newNote = response.data.data
             addNote(newNote)
-        } catch (error: any) {
-            const errorMessage = error.response.data.error;
-            openError(errorMessage);
+        }catch (error: unknown) {
+            if (typeof error === "object" && error !== null && "response" in error) {
+                const axiosError = error as { response: { data: { error: string } } };
+                const errorMessage = axiosError.response.data.error;
+                openError(errorMessage);
+            } else {
+                openError("An unexpected error occurred.");
+            }
         }
     };
 
-    const fetchAllNotes = async() => {
-        try {
-            setLoading(true)
-            const res = await fetchNotes();
-            const fetchedData = res.data.data
-            setNotes(fetchedData)
-        } catch (error: any) {
-            const errorMessage = error.response.data.error;
-            openError(errorMessage);
-        } finally {
-            setLoading(false)
-        }
-    };
+    if(!fetchAllNotes.current){
+        fetchAllNotes.current = async() => {
+            try {
+                setLoading(true)
+                const res = await fetchNotes();
+                const fetchedData = res.data.data
+                setNotes(fetchedData)
+            } catch (error: unknown) {
+                if (typeof error === "object" && error !== null && "response" in error) {
+                    const axiosError = error as { response: { data: { error: string } } };
+                    const errorMessage = axiosError.response.data.error;
+                    openError(errorMessage);
+                } else {
+                    openError("An unexpected error occurred.");
+                }
+            } finally {
+                setLoading(false)
+            }
+        };
+    }
 
     const updateNote = async ({noteObject, noteId}:{
         noteObject: {
@@ -207,10 +269,15 @@ export default function useBreezeHooks() {
     }) => {
         try {
             const response  = await noteUpdate(noteObject, noteId)
-            const updatedNote = response.data.data
-        } catch (error: any) {
-            const errorMessage = error.response.data.error;
-            openError(errorMessage);
+            return response
+        }catch (error: unknown) {
+            if (typeof error === "object" && error !== null && "response" in error) {
+                const axiosError = error as { response: { data: { error: string } } };
+                const errorMessage = axiosError.response.data.error;
+                openError(errorMessage);
+            } else {
+                openError("An unexpected error occurred.");
+            }
         }
     };
 
@@ -225,10 +292,17 @@ export default function useBreezeHooks() {
             const deletedNote = response.data.data
 
             const note = notes?.filter(note => note._id !== deletedNote._id)
-            note && setNotes(note);
-        } catch (error: any) {
-            const errorMessage = error.response.data.error;
-            openError(errorMessage);
+            if(note) {
+                setNotes(note);
+            }
+        } catch (error: unknown) {
+            if (typeof error === "object" && error !== null && "response" in error) {
+                const axiosError = error as { response: { data: { error: string } } };
+                const errorMessage = axiosError.response.data.error;
+                openError(errorMessage);
+            } else {
+                openError("An unexpected error occurred.");
+            }
         }
     };
 
@@ -256,7 +330,7 @@ export default function useBreezeHooks() {
             if (message !== '') {
                 setExistingData(taskData)
                 setMessages({
-                    id: messages?.length! + 2, 
+                    id: (messages?.length ?? 0) + 2, 
                     text: message, 
                     isUser: false,
                     timestamp: new Date()
@@ -265,27 +339,31 @@ export default function useBreezeHooks() {
                 setExistingData({})
                 addTask(taskData)
                 setMessages({
-                    id: messages?.length! + 2, 
+                    id: (messages?.length ?? 0) + 2, 
                     text: 'Task successfully created', 
                     isUser: false,
                     timestamp: new Date()
                   });
             }
-        } catch (error: any) {
-            if(error.status === 500) {
-                const errorMessage = error.response.data.error;
-                openError(errorMessage);
-                return;
-            }
-            
-            const errorMessage = error.response.data.message
-            setMessages(
-                { 
-                id: messages?.length! + 2, 
-                text: errorMessage ? errorMessage : "Sorry, I encountered an error. Please try again.", 
-                isUser: false,
-                timestamp: new Date()
+        } catch (error: unknown) {
+            if (typeof error === "object" && error !== null) {
+                const axiosError = error as { status?: number; response?: { data?: { error?: string; message?: string } } };
+        
+                if (axiosError.status === 500 && axiosError.response?.data?.error) {
+                    openError(axiosError.response.data.error);
+                    return;
+                }
+        
+                const errorMessage = axiosError.response?.data?.message || "Sorry, I encountered an error. Please try again.";
+                setMessages({
+                    id: (messages?.length ?? 0) + 2,
+                    text: errorMessage,
+                    isUser: false,
+                    timestamp: new Date(),
                 });
+            } else {
+                openError("An unexpected error occurred.");
+            }
         } finally {
             setLoading(false);
         }

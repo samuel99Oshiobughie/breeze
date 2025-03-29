@@ -1,4 +1,3 @@
-// ChatDrawer.tsx - AI Chat Drawer Component
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   Drawer, 
@@ -50,7 +49,7 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
     if (!inputValue.trim()) return;
 
     const userMessage: ChatMessage = { 
-      id: messages?.length! + 1, 
+      id: (messages?.length ?? 0) + 1, 
       text: inputValue, 
       isUser: true,
       timestamp: new Date()

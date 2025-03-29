@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Typography } from "@mui/material";
 import { Line } from 'react-chartjs-2';
 import {
@@ -12,7 +12,6 @@ import {
   Legend,
 } from 'chart.js';
 import useBreezeHooks from '@/hooks/useBreezeHooks';
-import { ITask } from '@/interface/interface';
 
 // Register ChartJS components
 ChartJS.register(

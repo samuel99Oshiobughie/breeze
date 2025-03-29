@@ -1,10 +1,7 @@
 import React, {useState} from "react";
 import { 
     Button,
-    Modal,
     TextField,
-    Box, 
-    Typography,
     Dialog,
     DialogTitle,
     DialogContent,

@@ -23,7 +23,6 @@ import {
 } from '@mui/material';
 
 import {
-  Search,
   Add as AddIcon,
   Delete as DeleteIcon,
   FilterList as FilterIcon,
@@ -45,13 +44,13 @@ export interface Task {
   updatedAt: string;
 }
 
-interface TaskUpdatePayload {
-  taskId: string;
-  projectId?: string;
-  updatedState: {
-    completed: boolean;
-  };
-}
+// interface TaskUpdatePayload {
+//   taskId: string;
+//   projectId?: string;
+//   updatedState: {
+//     completed: boolean;
+//   };
+// }
 
 const TasksPage = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -66,9 +65,10 @@ const TasksPage = () => {
 
   const {tasks, setTasks, fetchAllTasks, submitNewTask, updateTasks, deleteTasks, loading} = useBreezeHooks();
 
+
   useEffect(() => {
-    fetchAllTasks();
-  }, []);
+    fetchAllTasks.current?.();
+  }, [fetchAllTasks]);
     
   // Chat handlers
   const handleOpenChat = (): void => {
@@ -169,8 +169,9 @@ const TasksPage = () => {
 
     const taskUpdate = tasks?.map(t => t._id === _id ? { ...t, ...updatedCompletedState} : t);
 
-    taskUpdate && setTasks(taskUpdate);
-    // console.log("updated-task: ", taskUpdate);
+    if(taskUpdate) {
+      setTasks(taskUpdate);
+    } 
   };
 
   const handleDelete = async (): Promise<void> => {

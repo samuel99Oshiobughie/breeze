@@ -13,7 +13,7 @@ async function postNoteHandler(req: NextApiRequest, res: NextApiResponse) {
         const note = await createNoteController(req.body, req);
         return res.status(201).json({ success: true, data: note });
     } catch (error) {
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Internal server error' });
     }
 }
 
@@ -22,7 +22,7 @@ async function getNotesHandler(req: NextApiRequest, res: NextApiResponse) {
         const notes = await getNotesController(req);
         return res.status(200).json({ success: true, data: notes });
     } catch (error) {
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Internal server error' });
     }
 }
 
@@ -40,7 +40,7 @@ async function updateNotesHandler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(200).json({ success: true, data: updatedNote });
         
     } catch (error) {
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Internal server error' });
     }
 }
 
@@ -57,7 +57,7 @@ async function deleteNoteHandler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(200).json({ success: true, data: deletedNote });
         
     } catch (error) {
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Internal server error' });
     }
 }
 

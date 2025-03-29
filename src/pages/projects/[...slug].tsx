@@ -20,23 +20,23 @@ import useBreezeHooks from '@/hooks/useBreezeHooks'
 
 const ProjectTasks = () => {
    const {projects, tasks, setTasks, updateTasks, fetchAllTasks } = useBreezeHooks();
-  const router = useRouter();
-  const { slug } = router.query; 
+   const [searchTerm, setSearchTerm] = useState<string>('');
+   const [statusFilter, setStatusFilter] = useState<string>("all");
+   const [dueDateFilter, setDueDateFilter] = useState<string>("all");
+   const [priorityFilter, setPriorityFilter] = useState<string>("all");
+   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (!slug || !Array.isArray(slug) || slug.length < 2) {
-    return <p>Invalid project URL</p>; // Handle invalid URLs
-  }
-
-  const [projectId, projectName] = slug;
-  const selectedProject = projects?.find((project) => project._id === projectId);
-  const selectedTasks = tasks?.filter((task) => task.projectId === projectId);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [dueDateFilter, setDueDateFilter] = useState<string>("all");
-  const [priorityFilter, setPriorityFilter] = useState<string>("all");
-  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+   const router = useRouter();
+   const { slug } = router.query; 
+   
+   if (!slug || !Array.isArray(slug) || slug.length < 2) {
+     return <p>Invalid project URL</p>; // Handle invalid URLs
+    }
+    
+    const [projectId, projectName] = slug;
+    const selectedProject = projects?.find((project) => project._id === projectId);
+    const selectedTasks = tasks?.filter((task) => task.projectId === projectId);
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -80,7 +80,7 @@ const ProjectTasks = () => {
 
     const taskUpdate = tasks?.map(t => t._id === taskId ? { ...t, ...updatedCompletedState} : t);
 
-    taskUpdate && setTasks(taskUpdate);
+    if(taskUpdate) setTasks(taskUpdate);
     // console.log("updated-task: ", taskUpdate)
   };
 
@@ -92,7 +92,7 @@ const ProjectTasks = () => {
     };
 
     await updateTasks({taskId: taskId, projectId: projectId, updatedState: updatedProjectId});
-    await fetchAllTasks();
+    await fetchAllTasks.current?.();
   }
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {

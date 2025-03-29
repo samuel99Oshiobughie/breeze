@@ -1,7 +1,7 @@
 import React from 'react'
 import { Snackbar, IconButton } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import MuiAlert from '@mui/material/Alert'
+import MuiAlert, { AlertProps } from '@mui/material/Alert'
 
 import useBreezeHooks from '@/hooks/useBreezeHooks' 
 
@@ -9,17 +9,19 @@ interface IMySnackbarComponentProps {
   handleCloseSnackbar?: () => void
 }
 
-function Alert(props: any) {
+function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />
 }
 
 const SnackbarComponent = (props: IMySnackbarComponentProps) => {
 
-  const {snackbarMessage, setSnackbarMessage, snackbarMessageSeverity } = useBreezeHooks();
+  const { snackbarMessage, setSnackbarMessage, snackbarMessageSeverity } = useBreezeHooks();
 
   function handleCloseSnackbar() {
-    props.handleCloseSnackbar && props.handleCloseSnackbar()
-    setSnackbarMessage('')
+    if (props.handleCloseSnackbar) {
+      props.handleCloseSnackbar();
+    }
+    setSnackbarMessage('');
   }
 
   return (

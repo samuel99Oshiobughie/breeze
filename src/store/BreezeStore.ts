@@ -58,7 +58,7 @@ export const BreezeStore = createStore<BreezeStoreModel>({
         state.projects = payload
     }),
     addProject: action((state, payload) => {
-        payload && state.projects?.push(payload) 
+        if(payload) state.projects?.push(payload)
     }),
     tasks: [
         // { _id: '1', userId: '12',projectId: 'default-projectId1', title: 'Complete project proposal', description: 'Draft and finalize the project proposal document.', dueDate: '2025-02-01', completed: false, priority: 'high', tracked: false, createdAt: '2025-02-01', updatedAt: '2025-02-01'},
@@ -69,7 +69,7 @@ export const BreezeStore = createStore<BreezeStoreModel>({
         state.tasks = payload
     }),
     addTask: action((state, payload) => {
-       payload && state.tasks?.push(payload)
+       if(payload)  state.tasks?.push(payload)
     }),
     notes: [
         // { 
@@ -85,7 +85,7 @@ export const BreezeStore = createStore<BreezeStoreModel>({
     state.notes = payload
     }),
     addNote: action((state, payload) => {
-        payload && state.notes?.push(payload)
+        if(payload)  state.notes?.push(payload)
     }),
     loading: false,
     setLoading: action((state, payload) => {
@@ -100,7 +100,7 @@ export const BreezeStore = createStore<BreezeStoreModel>({
         }
     ],
     setMessages: action((state, payload) => {
-        payload && state.messages?.push(payload)
+        if(payload)  state.messages?.push(payload)
     }),
     existingData: {},
     setExistingData: action((state, payload) => {

@@ -13,7 +13,7 @@ async function postProjectHandler(req: NextApiRequest, res: NextApiResponse) {
         const project = await createProjectController(req.body, req);
         return res.status(201).json({ success: true, data: project });
     } catch (error) {
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Internal server error' });
     }
 }
 
@@ -31,7 +31,7 @@ async function getProjectsHandler(req: NextApiRequest, res: NextApiResponse) {
         }
         
     } catch (error) {
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Internal server error' });
     }
 }
 
@@ -48,7 +48,7 @@ async function deleteProjectHandler(req: NextApiRequest, res:NextApiResponse) {
 
         return res.status(201).json({ success: true, data: project });
     } catch (error) {
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Internal server error' });
     }
 }
 

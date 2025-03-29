@@ -2,6 +2,12 @@ import { ExtendedNextApiRequest } from '@/interface/interface'
 import Task, { ITask } from './taskModel';
 import { IUpdate } from '@/interface/interface';
 
+interface IFilter {
+    _id: string,
+    projectId: string,
+    userId: string
+}
+
 
 export const createTaskController = async (taskDetails: {
     title: string;
@@ -86,7 +92,7 @@ export const updateTaskController = async (options: {
             }
 
             // Define query filter
-            const filter: any = { _id: taskId, userId };
+            const filter: Partial<IFilter> = { _id: taskId, userId };
             if (projectId && projectId !== 'undefined') filter.projectId = projectId; // Add projectId only if provided
 
             // Update the task
@@ -124,7 +130,7 @@ export const deleteTaskController = async (options: {
 
         const { taskId, projectId} = options;
 
-        const filter: any = { _id: taskId, userId };
+        const filter: Partial<IFilter> = { _id: taskId, userId };
         if (projectId) filter.projectId = projectId;
         
         const deletedTask = await Task.findOneAndUpdate(filter, {deleted: true}, { new: true });
