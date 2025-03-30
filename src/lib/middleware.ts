@@ -82,11 +82,16 @@ export function applyMiddleware(handler: (req: NextApiRequest, res: NextApiRespo
     try {
       await dbConnect();
 
-      // Apply Next.js-compatible middleware in order
+      console.log("Before CORS")
       if (!corsMiddleware(req, res)) return;
+      console.log("After CORS")
+      console.log("Before RATE-LIMIT")
       if (!rateLimitMiddleware(req, res)) return;
+      console.log("After RATE-LIMIT")
 
+      console.log("Before SESSION")
       sessionMiddleware(req as ExtendedNextApiRequest, res);
+      console.log("After SESSION")
 
       await handler(req, res);
     } catch (error) {
