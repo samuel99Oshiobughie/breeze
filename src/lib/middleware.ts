@@ -51,20 +51,26 @@ const rateLimitMiddleware = (req: NextApiRequest, res: NextApiResponse) => {
 
 // ✅ 3. Session Middleware (No Express)
 export function sessionMiddleware(req: ExtendedNextApiRequest, res: NextApiResponse) {
-  let sessionId = req.cookies.sessionId;
+  let sessionId = req.cookies?.sessionId;
 
   if (!sessionId) {
     sessionId = uuidv4();
-    res.setHeader(
-      "Set-Cookie",
-      cookie.serialize("sessionId", sessionId, {
+
+    try {
+      const serializedCookie = cookie.serialize("sessionId", sessionId, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         maxAge: 60 * 60 * 24, // 1 day
         path: "/",
-      })
-    );
+      });
+
+      res.setHeader("Set-Cookie", serializedCookie);
+    } catch (error) {
+      console.error("Failed to serialize cookie:", error);
+      res.status(500).json({ error: "Failed to set session cookie" });
+      return;
+    }
   }
 
   req.sessionId = sessionId;
