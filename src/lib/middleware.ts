@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ExtendedNextApiRequest } from "@/interface/interface";
 import dbConnect from "./db";
-import cookie from "cookie";
+import * as cookie from "cookie";
 import { v4 as uuidv4 } from "uuid";
 
 // ✅ 1. Replace CORS with a native implementation
