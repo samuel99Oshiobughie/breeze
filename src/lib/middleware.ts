@@ -56,6 +56,8 @@ export function sessionMiddleware(req: ExtendedNextApiRequest, res: NextApiRespo
   if (!sessionId) {
     sessionId = uuidv4();
 
+    console.log("SESSION-ID: ", sessionId)
+
     try {
       const serializedCookie = cookie.serialize("sessionId", sessionId, {
         httpOnly: true,
@@ -64,6 +66,7 @@ export function sessionMiddleware(req: ExtendedNextApiRequest, res: NextApiRespo
         maxAge: 60 * 60 * 24, // 1 day
         path: "/",
       });
+      console.log("SERIALIZED-COOKIE: ", serializedCookie)
 
       res.setHeader("Set-Cookie", serializedCookie);
     } catch (error) {
@@ -74,6 +77,7 @@ export function sessionMiddleware(req: ExtendedNextApiRequest, res: NextApiRespo
   }
 
   req.sessionId = sessionId;
+  console.log("REQ-SESSION_ID: ", req.sessionId)
 }
 
 // ✅ 4. Apply Middleware (No Express Wrapping)
@@ -82,12 +86,8 @@ export function applyMiddleware(handler: (req: NextApiRequest, res: NextApiRespo
     try {
       await dbConnect();
 
-      console.log("Before CORS")
       if (!corsMiddleware(req, res)) return;
-      console.log("After CORS")
-      console.log("Before RATE-LIMIT")
       if (!rateLimitMiddleware(req, res)) return;
-      console.log("After RATE-LIMIT")
 
       console.log("Before SESSION")
       sessionMiddleware(req as ExtendedNextApiRequest, res);
