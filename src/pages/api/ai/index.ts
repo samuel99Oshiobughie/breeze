@@ -30,7 +30,7 @@ async function aiPostHandler(req: NextApiRequest, res: NextApiResponse) {
                 throw new Error("An unknown error occurred.");
             }
         }
-
+        
         if (!aiResponseData) {
             try {
                 // console.log('i am in two')
