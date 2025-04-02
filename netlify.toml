@@ -1,6 +1,6 @@
 [build]
-  command = "npm run build"
-  publish = ".netlify/functions-next"  # Correct directory for SSR
+  command = "npm run build"  # Keep the build command
+  # DO NOT SET PUBLISH DIRECTORY FOR NEXT.JS SSR
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
