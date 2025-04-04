@@ -9,78 +9,63 @@ import {
     deleteTaskController
 } from '@/database/task/task';
 
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+    return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error("Request timed out")), ms);
+        promise.then(
+            (value) => {
+                clearTimeout(timeout);
+                resolve(value);
+            },
+            (err) => {
+                clearTimeout(timeout);
+                reject(err);
+            }
+        );
+    });
+}
+
+
 async function aiPostHandler(req: NextApiRequest, res: NextApiResponse) {
+    
     try {
         const { prompt } = req.body;
 
         let aiResponseData = null;
 
-        try {
-            // console.log('i am in one')
-            aiResponseData = await aiResponse(prompt);
-            // console.log("AI Response from Together.AI:", aiResponseData);
-        } catch (error) {
-            if (error instanceof Error && "status" in error && typeof error.status === "number") {
-                if (error.status === 429) {
-                    console.warn("Together.AI rate limit exceeded. Falling back to AIMLAPI...");
-                } else {
-                    throw error; // Only throw unexpected errors
-                }
-            } else {
-                throw new Error("An unknown error occurred.");
-            }
-        }
-        
-        if (!aiResponseData) {
+        async function tryAiProvider(provider: () => Promise<any>, providerName: string) {
             try {
-                // console.log('i am in two')
-                aiResponseData = await aiSecondResponse(prompt);
-                // console.log("AI Response from OpenRouter API:", aiResponseData);
+                aiResponseData = await provider();
+                console.log(`AI Response from ${providerName}:`, aiResponseData);
+                return true; // Success
             } catch (error) {
-                if (error instanceof Error && "status" in error && typeof error.status === "number") {
-                    if (error.status === 429) {
-                        console.warn("OpenRouter API rate limit exceeded. Falling back to AIMLAPI...");
-                    } else {
-                        throw error; // Only throw unexpected errors
+                if (error instanceof Error) {
+                    if ("status" in error && typeof error.status === "number" && error.status === 429) {
+                        console.warn(`${providerName} rate limit exceeded. Trying next provider...`);
+                        return false; // Move to the next provider
                     }
-                } else {
-                    throw new Error("An unknown error occurred.");
+                    if (error.message === "Request timed out") {
+                        console.warn(`${providerName} took too long. Skipping to next provider...`);
+                        return false; // Move to the next provider
+                    }
                 }
+                throw error; 
             }
         }
 
-        if (!aiResponseData) {
-            try {
-                // console.log('i am in three')
-                aiResponseData = await aiLastResponse(prompt);
-                // console.log("AI Response from AIMLAPI:", aiResponseData);
-            } catch (error) {
-                if (error instanceof Error && "status" in error && typeof error.status === "number") {
-                    if (error.status === 429) {
-                        console.warn("AIMLAPI rate limit exceeded. No AI providers available.");
-                        // console.log('three is exhausted')
-                        return res.status(503).json({ 
-                            success: false, 
-                            message: "Server temporarily down, please try again in 4 minutes." 
-                        });
-                    } else {
-                        throw error; // Only throw unexpected errors
-                    }
-                } else {
-                    throw new Error("An unknown error occurred.");
-                }
+        if (!(await tryAiProvider(() => withTimeout(aiResponse(prompt), 5000), "Together.AI"))) {
+            if (!(await tryAiProvider(() => withTimeout(aiSecondResponse(prompt), 5000), "OpenRouter"))) {
+                await tryAiProvider(() => withTimeout(aiLastResponse(prompt), 5000), "AIMLAPI");
             }
         }
+        
 
         if (!aiResponseData) {
             return res.status(503).json({ 
                 success: false, 
-                message: "Server temporarily down, please try again in 4 minutes." 
+                message: "All AI providers exhausted. Please try again in a few minutes." 
             });
         }
-
-        // Proceed with normal intent processing if AI response is valid
-        // console.log('ai-Res:', aiResponseData);
 
         // Extract intent and provided fields
         const { intent, providedFields, message } = aiResponseData;
@@ -111,7 +96,6 @@ async function aiPostHandler(req: NextApiRequest, res: NextApiResponse) {
         }
 
         return res.status(200).json({ success: true, taskData: result, message: '' });
-
     } catch (error) {
         console.error("aiController:", error);
         return res.status(500).json({ error: 'Internal server error' });
@@ -120,6 +104,7 @@ async function aiPostHandler(req: NextApiRequest, res: NextApiResponse) {
 
 
 export default applyMiddleware(async (req: NextApiRequest, res: NextApiResponse) => {
+    // console.time("Execution Time");
     try {
       switch (req.method) {
         case 'POST':
@@ -130,5 +115,7 @@ export default applyMiddleware(async (req: NextApiRequest, res: NextApiResponse)
       }
     } catch (error) {
       res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Server error' });
+    }finally {
+        // console.timeEnd("Execution Time"); // ✅ Ensure it always runs
     }
 });

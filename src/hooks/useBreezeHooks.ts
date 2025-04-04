@@ -346,6 +346,7 @@ export default function useBreezeHooks() {
                   });
             }
         } catch (error: unknown) {
+            setExistingData({})
             if (typeof error === "object" && error !== null) {
                 const axiosError = error as { status?: number; response?: { data?: { error?: string; message?: string } } };
         

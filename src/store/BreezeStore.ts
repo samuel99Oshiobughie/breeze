@@ -94,7 +94,7 @@ export const BreezeStore = createStore<BreezeStoreModel>({
     messages: [
         { 
             id: 1, 
-            text: "Hi there! would you love to create a new task today?", 
+            text: `Hi there! would you love to create a new task today?. To create a new task provide the title, description, dueDate in format YYYY-MM-DD,priority which can be high, medium, low. You might experience time outs because a free tier ai api access is in use, please bare with us.`, 
             isUser: false, 
             timestamp: new Date() 
         }
