@@ -33,7 +33,7 @@ async function aiPostHandler(req: NextApiRequest, res: NextApiResponse) {
 
         let aiResponseData = null;
 
-        async function tryAiProvider(provider: () => Promise<any>, providerName: string) {
+        async function tryAiProvider<T>(provider: () => Promise<T>, providerName: string): Promise<boolean> {
             try {
                 aiResponseData = await provider();
                 console.log(`AI Response from ${providerName}:`, aiResponseData);
