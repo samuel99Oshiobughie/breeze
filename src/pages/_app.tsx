@@ -1,6 +1,5 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
-import Script from "next/script";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { StoreProvider } from 'easy-peasy'
@@ -21,7 +20,7 @@ const theme = createTheme({
   },
 });
 
-const measurementID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS;
+
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -29,29 +28,6 @@ export default function App({ Component, pageProps }: AppProps) {
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
-      { measurementID && (
-        <>
-          <Script
-              strategy="afterInteractive"
-              src={`https://www.googletagmanager.com/gtag/js?id=${measurementID}`}
-          />
-          <Script
-              id="google-analytics"
-              strategy="afterInteractive"
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${measurementID}', {
-                    page_path: window.location.pathname,
-                  });
-                `,
-              }}
-            />
-        </>
-      )}
-
       <ThemeProvider theme={theme}>
         <CssBaseline /> 
         <StoreProvider store={BreezeStore}>
