@@ -26,6 +26,9 @@ const measurementID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS;
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
+      <Head>
+        <meta name="viewport" content="initial-scale=1, width=device-width" />
+      </Head>
       { measurementID && (
         <>
           <Script
@@ -49,9 +52,6 @@ export default function App({ Component, pageProps }: AppProps) {
         </>
       )}
 
-      <Head>
-        <meta name="viewport" content="initial-scale=1, width=device-width" />
-      </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline /> 
         <StoreProvider store={BreezeStore}>
